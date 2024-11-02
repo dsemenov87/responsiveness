@@ -1,0 +1,63 @@
+﻿@page "/uris"
+@using responsiveness.Models
+@rendermode InteractiveServer
+@inject UriMonitoringModel Model
+@inject NavigationManager Navigation
+
+<PageTitle>Urls (@Model.Uris.Count)</PageTitle>
+
+<h3>Table of monitored URLs</h3>
+
+<hr/>
+
+<input placeholder="http://***, https://***" @bind="newUrl" />
+<button @onclick="AddUrl">Add URL</button>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Uri</th>
+        <th>Stats</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>@item.Uri.ToString()</td>
+        <td><a href="" @onclick="() => NavigateToStatistics(item.Uuid)" @onclick:preventDefault> URL statistics</a></td>
+        <td>forecast.TemperatureF</td>
+        <td>
+            <button @onclick="() => RemoveUrl(item.Uri)" class="btn btn-sm btn-danger rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+            </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private string? newUrl;
+    
+    private void AddUrl()
+    {
+        if (Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
+        {
+            Model.AddUri(new Uri(newUrl));
+            newUrl = string.Empty;
+        }
+        else
+        {
+            newUrl = "Invalid URL";
+        }
+    }
+
+    private void RemoveUrl(Uri uri)
+    {
+        Model.RemoveUri(uri);
+    }
+
+    private void NavigateToStatistics(Guid uuid) => Navigation.NavigateTo($"/uri/{uuid}");
+}

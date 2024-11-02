@@ -1,0 +1,62 @@
+﻿@page "/uri/{Uuid:guid}"
+@rendermode InteractiveServer
+@using responsiveness.Components.Models
+@using responsiveness.Models
+@inject UriMonitoringModel Model
+
+<PageTitle>URL statistics</PageTitle>
+
+<h2>@Model[Uuid].Uri</h2>
+<hr/>
+
+<LinePlot Settings="@_responseTimeSettings"></LinePlot>
+<LinePlot Settings="@_errorsSettings"></LinePlot>
+
+@code {
+    [Parameter]
+    public Guid Uuid { get; set; }
+
+    private readonly LinePlotSettings _responseTimeSettings = new()
+    {
+        ElementId = "responseTime",
+        Title = "URL response time",
+        Width = 600,
+        Height = 350,
+    };
+
+    private readonly LinePlotSettings _errorsSettings = new()
+    {
+        ElementId = "errors",
+        Title = "URL errors total count",
+        Width = 600,
+        Height = 350,
+    };
+
+    protected override void OnInitialized()
+    {
+        var data = Model[Uuid];
+        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(data));
+        _errorsSettings.Data.AddRange(GetErrorsPlotData(data));
+    }
+
+    private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringItem monitoring)
+    {
+        foreach (var measurement in monitoring.Measurements)
+        {
+            var time = (measurement.Timestamp - Model.StartTime).TotalMilliseconds / 1_000;
+            yield return new LinePlotData { MetricName = "Mean", N = measurement.Mean, Timestamp = time };
+            yield return new LinePlotData { MetricName = "StdDev", N = measurement.StdDev, Timestamp = time };
+            yield return new LinePlotData { MetricName = "Median", N = measurement.Median, Timestamp = time };
+        }
+    }
+
+    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringItem monitoring)
+    {
+        var counter = 0;
+        foreach (var errorTime in monitoring.Errors)
+        {
+            var time = (errorTime - Model.StartTime).TotalMilliseconds / 1_000;
+            yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
+        }
+    }
+}

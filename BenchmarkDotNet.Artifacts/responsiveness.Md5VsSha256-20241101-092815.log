@@ -1,0 +1,61 @@
+// Validating benchmarks:
+// Benchmark Md5VsSha256.Sha256: .NET Core 3.0(Runtime=.NET Core 3.0) [N=1000]
+//    * The required .NET Core SDK version 3.0 for runtime moniker NetCoreApp30 is not installed.
+
+// Benchmark Md5VsSha256.Md5: .NET Core 3.0(Runtime=.NET Core 3.0) [N=1000]
+//    * The required .NET Core SDK version 3.0 for runtime moniker NetCoreApp30 is not installed.
+
+// Benchmark Md5VsSha256.Sha256: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=1000]
+//    * Classic .NET toolchain is supported only for Windows, benchmark 'Md5VsSha256.Sha256: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=1000]' will not be executed
+
+// Benchmark Md5VsSha256.Md5: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=1000]
+//    * Classic .NET toolchain is supported only for Windows, benchmark 'Md5VsSha256.Md5: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=1000]' will not be executed
+
+// Benchmark Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=1000]
+//    * Mono is not installed or added to PATH, benchmark 'Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=1000]' will not be executed
+
+// Benchmark Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=1000]
+//    * The Roslyn toolchain is only supported on .NET Framework
+
+// Benchmark Md5VsSha256.Md5: Mono(Runtime=Mono) [N=1000]
+//    * Mono is not installed or added to PATH, benchmark 'Md5VsSha256.Md5: Mono(Runtime=Mono) [N=1000]' will not be executed
+
+// Benchmark Md5VsSha256.Md5: Mono(Runtime=Mono) [N=1000]
+//    * The Roslyn toolchain is only supported on .NET Framework
+
+// Benchmark Md5VsSha256.Sha256: NativeAOT 7.0(Runtime=NativeAOT 7.0) [N=1000]
+//    * The required .NET Core SDK version 7.0 for runtime moniker NativeAot70 is not installed.
+
+// Benchmark Md5VsSha256.Md5: NativeAOT 7.0(Runtime=NativeAOT 7.0) [N=1000]
+//    * The required .NET Core SDK version 7.0 for runtime moniker NativeAot70 is not installed.
+
+// Benchmark Md5VsSha256.Sha256: .NET Core 3.0(Runtime=.NET Core 3.0) [N=10000]
+//    * The required .NET Core SDK version 3.0 for runtime moniker NetCoreApp30 is not installed.
+
+// Benchmark Md5VsSha256.Md5: .NET Core 3.0(Runtime=.NET Core 3.0) [N=10000]
+//    * The required .NET Core SDK version 3.0 for runtime moniker NetCoreApp30 is not installed.
+
+// Benchmark Md5VsSha256.Sha256: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=10000]
+//    * Classic .NET toolchain is supported only for Windows, benchmark 'Md5VsSha256.Sha256: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=10000]' will not be executed
+
+// Benchmark Md5VsSha256.Md5: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=10000]
+//    * Classic .NET toolchain is supported only for Windows, benchmark 'Md5VsSha256.Md5: .NET Framework 4.7.2(Runtime=.NET Framework 4.7.2) [N=10000]' will not be executed
+
+// Benchmark Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=10000]
+//    * Mono is not installed or added to PATH, benchmark 'Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=10000]' will not be executed
+
+// Benchmark Md5VsSha256.Sha256: Mono(Runtime=Mono) [N=10000]
+//    * The Roslyn toolchain is only supported on .NET Framework
+
+// Benchmark Md5VsSha256.Md5: Mono(Runtime=Mono) [N=10000]
+//    * Mono is not installed or added to PATH, benchmark 'Md5VsSha256.Md5: Mono(Runtime=Mono) [N=10000]' will not be executed
+
+// Benchmark Md5VsSha256.Md5: Mono(Runtime=Mono) [N=10000]
+//    * The Roslyn toolchain is only supported on .NET Framework
+
+// Benchmark Md5VsSha256.Sha256: NativeAOT 7.0(Runtime=NativeAOT 7.0) [N=10000]
+//    * The required .NET Core SDK version 7.0 for runtime moniker NativeAot70 is not installed.
+
+// Benchmark Md5VsSha256.Md5: NativeAOT 7.0(Runtime=NativeAOT 7.0) [N=10000]
+//    * The required .NET Core SDK version 7.0 for runtime moniker NativeAot70 is not installed.
+

@@ -1,0 +1,42 @@
+@page "/top"
+@using responsiveness.Models
+@rendermode InteractiveServer
+@inject UriMonitoringModel Model
+
+<PageTitle>Top</PageTitle>
+
+<h3>Top 10 of monitored URLs</h3>
+
+<hr/>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Uri</th>
+        <th>Response time (median), us</th>
+        <th>Total errors</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model
+                  .Select(x => new
+                  {
+                      x.Uri,
+                      Median = x.Measurements.LastOrDefault()?.Median ?? double.PositiveInfinity,
+                      x.TotalErrorCount,
+                  })
+                  .OrderBy(x => x.Median)
+                  .ThenByDescending(x => x.TotalErrorCount)
+                  .Take(10))
+    {
+    <tr>
+        <td>@item.Uri.ToString()</td>
+        <td>@item.Median</td>
+        <td>@item.TotalErrorCount</td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+}
