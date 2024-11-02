@@ -1,5 +1,20 @@
-<h3>Pie</h3>
+@using responsiveness.Components.Models
+@rendermode InteractiveServer
+<h3>@(Settings?.Title ?? "")</h3>
+
+<div id="@(Settings?.ElementId ?? "")"></div>
+
+@inject IJSRuntime JsRuntime
 
 @code {
-    
+    [Parameter]
+    public PieSettings? Settings { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Settings is not null)
+        {
+            await JsRuntime.InvokeVoidAsync("SiteFunctions.GeneratePie", Settings);
+        }
+    }
 }

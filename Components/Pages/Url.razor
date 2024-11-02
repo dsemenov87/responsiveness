@@ -31,12 +31,23 @@
         Width = 600,
         Height = 350,
     };
+    
+    private readonly PieSettings _pieSettings = new()
+    {
+        ElementId = "pie",
+        Title = "URL errors total count",
+        Width = 600,
+        Height = 350,
+    };
 
     protected override void OnInitialized()
     {
         var data = Model[Uuid];
         _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(data));
         _errorsSettings.Data.AddRange(GetErrorsPlotData(data));
+        
+        // _pieSettings.Data.Clear();
+        // _pieSettings.Data.
     }
 
     private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringItem monitoring)
@@ -59,4 +70,14 @@
             yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
         }
     }
+    
+    // private IEnumerable<> GetPieData(UriMonitoringItem monitoring)
+    // {
+    //     var counter = 0;
+    //     foreach (var errorTime in monitoring.Errors)
+    //     {
+    //         var time = (errorTime - Model.StartTime).TotalMilliseconds / 1_000;
+    //         yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
+    //     }
+    // }
 }

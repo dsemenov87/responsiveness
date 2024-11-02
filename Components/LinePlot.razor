@@ -12,7 +12,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Settings is not null)
+        if (firstRender && Settings is not null)
         {
             await JsRuntime.InvokeVoidAsync("SiteFunctions.GenerateLinePlot", Settings);
         }

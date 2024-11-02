@@ -70,8 +70,9 @@ SiteFunctions = {
             .attr("transform", `translate(${width/2}, ${height/2})`);
 
 // Create dummy data
-        const data = {a: 9, b: 20, c:30, d:8, e:12}
-
+//         const data = {a: 9, b: 20, c:30, d:8, e:12}
+        const data = settings.data;
+        
 // set the color scale
         const color = d3.scaleOrdinal()
             .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
