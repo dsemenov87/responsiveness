@@ -4,7 +4,7 @@ namespace responsiveness.CommonServices;
 
 public sealed class StatsCalculator: IStatsCalculator
 {
-    public double CalculateMean(double[] data) => data.Mean();
+    public double Mean(double[] data) => data.Mean();
 
     public double RecalculateMean(double mean, int number, int val) =>
         (mean * (number - 1) + val) / number;

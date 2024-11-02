@@ -24,7 +24,7 @@ public sealed class UriBenchmarkService(
             await Task.Delay(options.Value.BenchmarkDelayMs, cancellation);
         }
 
-        var mean = statsCalculator.CalculateMean(data);
+        var mean = statsCalculator.Mean(data);
         var stdDev = statsCalculator.StandartDeviation(data, mean);
         var median = statsCalculator.Median(data);
         
