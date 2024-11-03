@@ -7,4 +7,5 @@ public class LinePlotSettings
         public List<LinePlotData> Data { get; } = new List<LinePlotData>();
         public required int Width { get; init; }
         public required int Height { get; init; }
+        public string? HtmlClass { get; init; }
 }

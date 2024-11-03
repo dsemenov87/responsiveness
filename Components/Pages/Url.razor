@@ -5,14 +5,39 @@
 @using responsiveness.Components.Models
 @using responsiveness.Models
 @inject UriMonitoringModel Model
+@inject IStatsCalculator StatsCalculator
 
 <PageTitle>URL statistics</PageTitle>
 
 <h2>@DecodeUri(EncodedUri!)</h2>
 <hr/>
 
-<LinePlot Settings="@_responseTimeSettings"></LinePlot>
-<LinePlot Settings="@_errorsSettings"></LinePlot>
+<section class="chart-panel">
+    <LinePlot Settings="@_responseTimeSettings"></LinePlot>
+    <div class="chart-right">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Stage</th>
+                <th>Time, ms</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var (stage, time) in _networkData)
+            {
+            <tr>
+                <td>@stage.ToString()</td>
+                <td>@time</td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>
+<hr/>
+<section class="chart-panel">
+    <LinePlot Settings="@_errorsSettings"></LinePlot>
+</section>
 
 @code {
     [Parameter]
@@ -26,6 +51,7 @@
         Title = "URL response time",
         Width = 600,
         Height = 350,
+        HtmlClass = "chart-left",
     };
 
     private readonly LinePlotSettings _errorsSettings = new()
@@ -34,25 +60,18 @@
         Title = "URL errors total count",
         Width = 600,
         Height = 350,
+        HtmlClass = "chart-left",
     };
-    
-    private readonly PieSettings _pieSettings = new()
-    {
-        ElementId = "pie",
-        Title = "URL errors total count",
-        Width = 600,
-        Height = 350,
-    };
+
+    private readonly Dictionary<HttpRequestStage, double> _networkData = new();
 
     protected override void OnInitialized()
     {
         var uri = DecodeUri(EncodedUri!);
-        var data = Model[uri];
-        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(data));
-        _errorsSettings.Data.AddRange(GetErrorsPlotData(data));
-        
-        // _pieSettings.Data.Clear();
-        // _pieSettings.Data.
+        var process = Model[uri];
+        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(process));
+        _errorsSettings.Data.AddRange(GetErrorsPlotData(process));
+        UpdateNetworkData(process);
     }
 
     private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringProcess process)
@@ -69,23 +88,38 @@
         }
     }
 
-    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringProcess monitoring)
+    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringProcess process)
     {
         var counter = 0;
-        foreach (var errorTime in monitoring.Errors)
+        foreach (var errorTime in process.Errors)
         {
             var time = (errorTime - Model.StartTime).TotalMilliseconds / 1_000;
             yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
         }
     }
     
-    // private IEnumerable<> GetPieData(UriMonitoringItem monitoring)
-    // {
-    //     var counter = 0;
-    //     foreach (var errorTime in monitoring.Errors)
-    //     {
-    //         var time = (errorTime - Model.StartTime).TotalMilliseconds / 1_000;
-    //         yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
-    //     }
-    // }
+    private void UpdateNetworkData(UriMonitoringProcess process)
+    {
+        var data = new Dictionary<HttpRequestStage, List<double>>();
+        foreach (var measurement in process.Measurements)
+        {
+            var time = (measurement.Timestamp - Model.StartTime).TotalMilliseconds / 1_000;
+            foreach (var metrics in measurement.MetricsList)
+            {
+                if (data.TryGetValue(metrics.Stage, out var value))
+                    value.Add(metrics.Median);
+                else
+                {
+                    var newList = new List<double>(1024) { metrics.Median };
+                    data.Add(metrics.Stage, newList);
+                }
+            }
+        }
+
+        _networkData.Clear();
+        foreach (var (stage, measurements) in data)
+        {
+            _networkData.Add(stage, StatsCalculator.Median(measurements));
+        }
+    }
 }

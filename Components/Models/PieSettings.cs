@@ -7,4 +7,5 @@ public class PieSettings
     public Dictionary<string, double> Data { get; } = new();
     public required int Width { get; init; }
     public required int Height { get; init; }
+    public string? HtmlClass { get; init; }
 }

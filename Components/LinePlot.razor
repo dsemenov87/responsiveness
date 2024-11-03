@@ -1,8 +1,10 @@
 @using responsiveness.Components.Models
 @rendermode InteractiveServer
-<h3>@(Settings?.Title ?? "")</h3>
 
-<div id="@(Settings?.ElementId ?? "")"></div>
+<div class="@(Settings?.HtmlClass ?? "")">
+    <h4>@(Settings?.Title ?? "")</h4>
+    <div id="@(Settings?.ElementId ?? "")"></div>
+</div>
 
 @inject IJSRuntime JsRuntime
 

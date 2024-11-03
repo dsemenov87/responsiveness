@@ -2,6 +2,27 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.chart-panel {
+    display: flex;
+    flex-direction: row;
+}
+
+.chart-left {
+    width: 50%;
+    text-align: center;
+}
+
+.chart-right {
+    width: 50%;
+    text-align: center;
+}
+
+.chart-right > table {
+    text-align: left;
+}
+
+
+
 a, .btn-link {
     color: #006bb7;
 }

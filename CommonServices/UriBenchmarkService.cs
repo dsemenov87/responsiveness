@@ -22,9 +22,12 @@ public sealed class UriBenchmarkService(
             foreach (var (stage, time) in timings)
             {
                 if (data.TryGetValue(stage, out var value))
-                    value.Add(time); 
+                    value.Add(time);
                 else
-                   data.Add(stage, [time]);
+                {
+                    var newList = new List<double>(64) { time };
+                    data.Add(stage, newList);
+                }
             }
             
             await Task.Delay(options.Value.BenchmarkDelayMs, cancellation);
@@ -33,7 +36,7 @@ public sealed class UriBenchmarkService(
         var metrics = data.Select(kv => 
         {
             var mean = statsCalculator.Mean(kv.Value.ToArray());
-            var stdDev = statsCalculator.StandartDeviation(kv.Value.ToArray(), mean);
+            var stdDev = statsCalculator.StdDev(kv.Value.ToArray(), mean);
             var median = statsCalculator.Median(kv.Value.ToArray());
             return new UriMetrics(kv.Key, mean, stdDev, median);
         })
