@@ -1,12 +1,14 @@
-﻿@page "/uri/{Uuid:guid}"
+﻿@page "/uri/{encodedUri}"
 @rendermode InteractiveServer
+@using System.Net
+@using responsiveness.CommonServices
 @using responsiveness.Components.Models
 @using responsiveness.Models
 @inject UriMonitoringModel Model
 
 <PageTitle>URL statistics</PageTitle>
 
-<h2>@Model[Uuid].Uri</h2>
+<h2>@DecodeUri(EncodedUri!)</h2>
 <hr/>
 
 <LinePlot Settings="@_responseTimeSettings"></LinePlot>
@@ -14,7 +16,9 @@
 
 @code {
     [Parameter]
-    public Guid Uuid { get; set; }
+    public string? EncodedUri { get; set; }
+
+    private static Uri DecodeUri(string encodedUri) => new(WebUtility.UrlDecode(encodedUri));
 
     private readonly LinePlotSettings _responseTimeSettings = new()
     {
@@ -42,7 +46,8 @@
 
     protected override void OnInitialized()
     {
-        var data = Model[Uuid];
+        var uri = DecodeUri(EncodedUri!);
+        var data = Model[uri];
         _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(data));
         _errorsSettings.Data.AddRange(GetErrorsPlotData(data));
         
@@ -50,18 +55,21 @@
         // _pieSettings.Data.
     }
 
-    private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringItem monitoring)
+    private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringProcess process)
     {
-        foreach (var measurement in monitoring.Measurements)
+        foreach (var measurement in process.Measurements)
         {
             var time = (measurement.Timestamp - Model.StartTime).TotalMilliseconds / 1_000;
-            yield return new LinePlotData { MetricName = "Mean", N = measurement.Mean, Timestamp = time };
-            yield return new LinePlotData { MetricName = "StdDev", N = measurement.StdDev, Timestamp = time };
-            yield return new LinePlotData { MetricName = "Median", N = measurement.Median, Timestamp = time };
+            var metrics = measurement.MetricsList.FirstOrDefault(m => m.Stage == HttpRequestStage.TotalRequest);
+            if (metrics is null) continue;
+            
+            yield return new LinePlotData { MetricName = "Mean", N = metrics.Mean, Timestamp = time };
+            yield return new LinePlotData { MetricName = "StdDev", N = metrics.StdDev, Timestamp = time };
+            yield return new LinePlotData { MetricName = "Median", N = metrics.Median, Timestamp = time };
         }
     }
 
-    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringItem monitoring)
+    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringProcess monitoring)
     {
         var counter = 0;
         foreach (var errorTime in monitoring.Errors)

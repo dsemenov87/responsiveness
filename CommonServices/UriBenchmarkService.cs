@@ -12,23 +12,34 @@ public sealed class UriBenchmarkService(
 {
     public async Task<UriMeasurement?> RunAsync(Uri uri, CancellationToken cancellation = default)
     {
-        var data = new double[options.Value.BenchmarkRepeats];
+        var data = new Dictionary<HttpRequestStage, List<double>>();
         for (var num = 0; num < options.Value.BenchmarkRepeats; num++)
         {
             var timings = await MakeRequestAsync(uri, cancellation);
-            if (timings?.Request.HasValue != true)
+            if (timings is null)
                 return null;
-            
-            data[num] = timings.Request.Value.Microseconds;
+
+            foreach (var (stage, time) in timings)
+            {
+                if (data.TryGetValue(stage, out var value))
+                    value.Add(time); 
+                else
+                   data.Add(stage, [time]);
+            }
             
             await Task.Delay(options.Value.BenchmarkDelayMs, cancellation);
         }
 
-        var mean = statsCalculator.Mean(data);
-        var stdDev = statsCalculator.StandartDeviation(data, mean);
-        var median = statsCalculator.Median(data);
-        
-        return new UriMeasurement(DateTimeOffset.Now, mean, stdDev, median);
+        var metrics = data.Select(kv => 
+        {
+            var mean = statsCalculator.Mean(kv.Value.ToArray());
+            var stdDev = statsCalculator.StandartDeviation(kv.Value.ToArray(), mean);
+            var median = statsCalculator.Median(kv.Value.ToArray());
+            return new UriMetrics(kv.Key, mean, stdDev, median);
+        })
+        .ToArray();
+
+        return new UriMeasurement(DateTimeOffset.Now, metrics);
     }
 
     private async Task<HttpRequestTimings?> MakeRequestAsync(Uri uri, CancellationToken cancellation = default)

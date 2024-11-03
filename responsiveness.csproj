@@ -21,6 +21,7 @@
     <Compile Remove="BenchmarkTests.cs" />
     <Compile Remove="BenchmarkDotNet.Artifacts\**" />
     <Compile Remove="Components\Pages\Top.cshtml.cs" />
+    <Compile Remove="HostedServices\UriMonitoringHostedService.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,10 @@
   <ItemGroup>
     <None Remove="BenchmarkDotNet.Artifacts\**" />
     <None Remove="Components\Pages\NewFile1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HostedServices\" />
   </ItemGroup>
 
 </Project>

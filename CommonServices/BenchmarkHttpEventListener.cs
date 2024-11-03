@@ -13,7 +13,6 @@ internal sealed class BenchmarkHttpEventListener : EventListener
 
     internal BenchmarkHttpEventListener()
     {
-        // set variable here
         _timings.Value = new HttpRequestTimingDataRaw();
     }
 
@@ -93,16 +92,17 @@ internal sealed class BenchmarkHttpEventListener : EventListener
     public HttpRequestTimings GetMeasurement()
     {
         var raw = _timings.Value!;
-        return new()
-        {
-            Request = raw.RequestStop - raw.RequestStart,
-            Dns = raw.DnsStop - raw.DnsStart,
-            SslHandshake = raw.SslHandshakeStop - raw.SslHandshakeStart,
-            SocketConnect = raw.SocketConnectStop - raw.SocketConnectStart,
-            RequestHeaders = raw.RequestHeadersStop - raw.RequestHeadersStart,
-            ResponseHeaders = raw.ResponseHeadersStop - raw.ResponseHeadersStart,
-            ResponseContent = raw.ResponseContentStop - raw.ResponseContentStart
-        };
+        var timings = new HttpRequestTimings();
+        
+        timings.Put(HttpRequestStage.TotalRequest, raw.RequestStop - raw.RequestStart);
+        timings.Put(HttpRequestStage.Dns, raw.DnsStop - raw.DnsStart);
+        timings.Put(HttpRequestStage.SslHandshake, raw.SslHandshakeStop - raw.SslHandshakeStart);
+        timings.Put(HttpRequestStage.SocketConnect, raw.SocketConnectStop - raw.SocketConnectStart);
+        timings.Put(HttpRequestStage.RequestHeaders, raw.RequestHeadersStop - raw.RequestHeadersStart);
+        timings.Put(HttpRequestStage.ResponseHeaders, raw.ResponseHeadersStop - raw.ResponseHeadersStart);
+        timings.Put(HttpRequestStage.ResponseContent, raw.ResponseContentStop - raw.ResponseContentStart);
+        
+        return timings;
     }
 
 

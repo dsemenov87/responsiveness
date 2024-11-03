@@ -1,7 +1,5 @@
-using responsiveness;
 using responsiveness.CommonServices;
 using responsiveness.Components;
-using responsiveness.HostedServices;
 using responsiveness.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +35,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddSingleton<IStatsCalculator, StatsCalculator>();
     services.AddSingleton<IUriBenchmarkService, UriBenchmarkService>();
     services.AddSingleton<UriMonitoringModel>();
-    services.AddHostedService<UriMonitoringHostedService>();
+    services.AddSingleton<IUriMonitoringLauncher, UriMonitoringLauncher>();
     services.AddRazorComponents().AddInteractiveServerComponents();
 }

@@ -1,10 +1,12 @@
 ﻿@page "/uris"
+@using System.Net
 @using responsiveness.Models
 @rendermode InteractiveServer
 @inject UriMonitoringModel Model
+@inject IUriMonitoringLauncher MonitoringLauncher
 @inject NavigationManager Navigation
 
-<PageTitle>Urls (@Model.Uris.Count)</PageTitle>
+<PageTitle>Urls (@Model.GetProcesses().Count)</PageTitle>
 
 <h3>Table of monitored URLs</h3>
 
@@ -22,14 +24,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var process in Model.GetProcesses())
     {
     <tr>
-        <td>@item.Uri.ToString()</td>
-        <td><a href="" @onclick="() => NavigateToStatistics(item.Uuid)" @onclick:preventDefault> URL statistics</a></td>
-        <td>forecast.TemperatureF</td>
+        <td>@process.Uri.ToString()</td>
+        <td><a href="" @onclick="() => NavigateToStatistics(process.Uri)" @onclick:preventDefault> URL statistics</a></td>
+        <td>@process.Status</td>
         <td>
-            <button @onclick="() => RemoveUrl(item.Uri)" class="btn btn-sm btn-danger rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+            <button @onclick="() => RemoveUrl(process.Uri)" class="btn btn-sm btn-danger rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
                 <i class="fa fa-trash"></i> Delete
             </button>
             </td>
@@ -45,7 +47,8 @@
     {
         if (Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
         {
-            Model.AddUri(new Uri(newUrl));
+            var uri = new Uri(newUrl);
+            Model.AddUriMonitoring(uri, MonitoringLauncher.LaunchProcess(uri));
             newUrl = string.Empty;
         }
         else
@@ -54,10 +57,11 @@
         }
     }
 
-    private void RemoveUrl(Uri uri)
-    {
-        Model.RemoveUri(uri);
-    }
+    private void RemoveUrl(Uri uri) => Model.StopUriMonitoring(uri);
 
-    private void NavigateToStatistics(Guid uuid) => Navigation.NavigateTo($"/uri/{uuid}");
+    private void NavigateToStatistics(Uri uri)
+    {
+        var encodedUri = WebUtility.UrlEncode(uri.ToString());
+        Navigation.NavigateTo($"/uri/{encodedUri}");
+    }
 }
