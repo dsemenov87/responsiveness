@@ -1,6 +1,7 @@
 using responsiveness.CommonServices;
 using responsiveness.Components;
 using responsiveness.Models;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +32,17 @@ return;
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
     services.Configure<UriMonitoringOptions>(configuration.GetSection(UriMonitoringOptions.SectionName));
-    services.AddHttpClient();
+    services.AddHttpClient(nameof(UriBenchmarkService))
+        .ConfigureHttpClient((sp, c) =>
+        {
+            var config = sp.GetRequiredService<IOptions<UriMonitoringOptions>>().Value;
+            c.Timeout = TimeSpan.FromSeconds(config.HttpClientTimeoutSec);
+        })
+        .AddStandardResilienceHandler();
     services.AddSingleton<IStatsCalculator, StatsCalculator>();
     services.AddSingleton<IUriBenchmarkService, UriBenchmarkService>();
     services.AddSingleton<UriMonitoringModel>();
     services.AddSingleton<IUriMonitoringLauncher, UriMonitoringLauncher>();
     services.AddRazorComponents().AddInteractiveServerComponents();
 }
+

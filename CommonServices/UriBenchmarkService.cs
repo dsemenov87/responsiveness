@@ -5,6 +5,7 @@ namespace responsiveness.CommonServices;
 
 public sealed class UriBenchmarkService(
     IHttpClientFactory httpClientFactory,
+    
     IStatsCalculator statsCalculator,
     IOptions<UriMonitoringOptions> options,
     ILogger<UriBenchmarkService> logger
@@ -49,7 +50,7 @@ public sealed class UriBenchmarkService(
     {
         try
         {
-            using var httpClient = httpClientFactory.CreateClient($"{uri}");
+            using var httpClient = httpClientFactory.CreateClient(nameof(UriBenchmarkService));
             using var listener = new BenchmarkHttpEventListener();
             // we start new listener scope here
             // only this specific request timings will be measured
