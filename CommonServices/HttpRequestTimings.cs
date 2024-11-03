@@ -45,13 +45,3 @@ public sealed class HttpRequestTimings: IEnumerable<(HttpRequestStage, double)>
         return GetEnumerator();
     }
 }
-public enum HttpRequestStage
-{
-    Dns,
-    SocketConnect,
-    SslHandshake,
-    RequestHeaders,
-    ResponseHeaders,
-    ResponseContent,
-    TotalRequest,
-}

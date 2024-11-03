@@ -11,39 +11,52 @@
 
 <h2>@DecodeUri(EncodedUri!)</h2>
 <hr/>
+<div class="container">
+    <div class="row justify-content-start">
+        <div class="col-12 col-lg-6">
+            <LinePlot Settings="@_responseTimeSettings"></LinePlot>
+        </div>
+        <div class="col-12 col-lg-6">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Mean time, ms</th>
+                    <th>Median time, ms</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var (stage, (mean, median)) in _networkData)
+                {
+                <tr>
+                    <td>@stage.ToString()</td>
+                    <td>@mean</td>
+                    <td>@median</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        </div>
 
-<section class="chart-panel">
-    <LinePlot Settings="@_responseTimeSettings"></LinePlot>
-    <div class="chart-right">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Stage</th>
-                <th>Time, ms</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var (stage, time) in _networkData)
-            {
-            <tr>
-                <td>@stage.ToString()</td>
-                <td>@time</td>
-            </tr>
-            }
-            </tbody>
-        </table>
+        <!-- Force next columns to break to new line at md breakpoint and up -->
+        <div class="w-100 d-none d-md-block"></div>
+
     </div>
-</section>
+</div>
 <hr/>
-<section class="chart-panel">
-    <LinePlot Settings="@_errorsSettings"></LinePlot>
-</section>
+<ul class="list-group">
+    <li class="list-group-item">
+        <h4>Total errors: @_process.TotalErrorCount</h4>
+    </li>
+</ul>
 
 @code {
     [Parameter]
     public string? EncodedUri { get; set; }
 
     private static Uri DecodeUri(string encodedUri) => new(WebUtility.UrlDecode(encodedUri));
+
+    private UriMonitoringProcess? _process;
 
     private readonly LinePlotSettings _responseTimeSettings = new()
     {
@@ -63,15 +76,15 @@
         HtmlClass = "chart-left",
     };
 
-    private readonly Dictionary<HttpRequestStage, double> _networkData = new();
+    private readonly Dictionary<HttpRequestStage, (double mean, double med)> _networkData = new();
 
     protected override void OnInitialized()
     {
         var uri = DecodeUri(EncodedUri!);
-        var process = Model[uri];
-        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(process));
-        _errorsSettings.Data.AddRange(GetErrorsPlotData(process));
-        UpdateNetworkData(process);
+        _process = Model[uri];
+        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(_process));
+        _errorsSettings.Data.AddRange(GetErrorsPlotData(_process));
+        UpdateNetworkData(_process);
     }
 
     private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringProcess process)
@@ -119,7 +132,9 @@
         _networkData.Clear();
         foreach (var (stage, measurements) in data)
         {
-            _networkData.Add(stage, StatsCalculator.Median(measurements));
+            var mean= StatsCalculator.Mean(measurements);
+            var median = StatsCalculator.Median(measurements);
+            _networkData.Add(stage, (mean, median));
         }
     }
 }

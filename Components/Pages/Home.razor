@@ -1,9 +1,66 @@
 ﻿@page "/"
+@using System.Net
+@using responsiveness.Models
+@rendermode InteractiveServer
+@inject UriMonitoringModel Model
+@inject IUriMonitoringLauncher MonitoringLauncher
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Urls (@Model.GetProcesses().Count)</PageTitle>
 
-<h3>Summary</h3>
+<h3>Table of monitored URLs</h3>
+<hr/>
+
+<input placeholder="http://***, https://***" @bind="newUrl" />
+<button @onclick="AddUrl">Add URL</button>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Uri</th>
+        <th>Stats</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var process in Model.GetProcesses())
+    {
+        <tr>
+            <td>@process.Uri.ToString()</td>
+            <td><a href="" @onclick="() => NavigateToStatistics(process.Uri)" @onclick:preventDefault> URL statistics</a></td>
+            <td>@process.Status</td>
+            <td>
+                <button @onclick="() => RemoveUrl(process.Uri)" class="btn btn-sm btn-danger rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 @code {
+    private string? newUrl;
 
+    private void AddUrl()
+    {
+        if (Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
+        {
+            var uri = new Uri(newUrl);
+            Model.AddUriMonitoring(uri, MonitoringLauncher.LaunchProcess(uri));
+            newUrl = string.Empty;
+        }
+        else
+        {
+            newUrl = "Invalid URL";
+        }
+    }
+
+    private void RemoveUrl(Uri uri) => Model.StopUriMonitoring(uri);
+
+    private void NavigateToStatistics(Uri uri)
+    {
+        var encodedUri = WebUtility.UrlEncode(uri.ToString());
+        Navigation.NavigateTo($"/uri/{encodedUri}");
+    }
 }

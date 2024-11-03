@@ -40,8 +40,17 @@ internal sealed class BenchmarkHttpEventListener : EventListener
         var timings = _timings.Value;
         if (timings is null)
             return; // some event which is not related to this scope, ignore it
+
         var fullName = $"{eventData.EventSource.Name}.{eventData.EventName}";
 
+        // regarding your concern that with this approach you might receive events
+        // not related to the specific web request you are interested in. You can do the
+        // correlation using AsyncLocal variable, as documentation mentions here.
+        // The idea is simple - you use AsyncLocal variable and set its value to something
+        // (such as class holding your timing information) before doing request with HttpClient.
+        // Then you perform request. Now, when new event comes in - you check the value of
+        // AsyncLocal variable. If it's not null - then this event is related to the current
+        // request, otherwise you can ignore it.
         switch (fullName)
         {
             case "System.Net.Http.RequestStart":
