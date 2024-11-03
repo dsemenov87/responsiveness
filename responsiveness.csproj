@@ -25,6 +25,7 @@
     <Compile Remove="BenchmarkDotNet.Artifacts\**" />
     <Compile Remove="Components\Pages\Top.cshtml.cs" />
     <Compile Remove="HostedServices\UriMonitoringHostedService.cs" />
+    <Compile Remove="Components\Pages\Refresh.cshtml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,8 @@
     <Content Remove="BenchmarkDotNet.Artifacts\**" />
     <Content Remove="Components\Pages\Top.cshtml" />
     <Content Remove="Components\Pages\Urls.razor" />
+    <Content Remove="Components\Pages\Refresh.cshtml" />
+    <Content Remove="Components\Pages\Refresh.razor" />
   </ItemGroup>
 
   <ItemGroup>

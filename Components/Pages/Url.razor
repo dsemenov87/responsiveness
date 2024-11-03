@@ -1,15 +1,15 @@
-﻿@page "/uri/{encodedUri}"
+﻿@page "/uri/{uri}"
 @rendermode InteractiveServer
-@using System.Net
 @using responsiveness.CommonServices
 @using responsiveness.Components.Models
 @using responsiveness.Models
 @inject UriMonitoringModel Model
 @inject IStatsCalculator StatsCalculator
+@inject IJSRuntime JsRuntime
 
 <PageTitle>URL statistics</PageTitle>
 
-<h2>@DecodeUri(EncodedUri!)</h2>
+<h2>@(Uri ?? "")</h2>
 <hr/>
 <div class="container">
     <div class="row justify-content-start">
@@ -51,16 +51,14 @@
 
 @code {
     [Parameter]
-    public string? EncodedUri { get; set; }
-
-    private static Uri DecodeUri(string encodedUri) => new(WebUtility.UrlDecode(encodedUri));
+    public string? Uri { get; set; }
 
     private UriMonitoringProcess? _process;
 
     private readonly LinePlotSettings _responseTimeSettings = new()
     {
         ElementId = "responseTime",
-        Title = "URL response time",
+        Title = "URL response time, ms",
         Width = 600,
         Data =
         {
@@ -73,9 +71,25 @@
 
     private readonly Dictionary<HttpRequestStage, (double mean, double med)> _networkData = new();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            await base.OnAfterRenderAsync(firstRender);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    
+        await Task.Delay(10_000);
+        await JsRuntime.InvokeVoidAsync("window.location.reload");
+    }
+
     protected override void OnInitialized()
     {
-        var uri = DecodeUri(EncodedUri!);
+        var uri = new Uri(Uri!);
         _process = Model[uri];
         UpdateResponseTime(_process);
         UpdateNetworkData(_process);

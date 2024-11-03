@@ -1,4 +1,5 @@
 SiteFunctions = {
+    
     GenerateLinePlot: function (settings) {
         // set the dimensions and margins of the graph
         const margin = {top: 20, right: 20, bottom: 30, left: 40},
