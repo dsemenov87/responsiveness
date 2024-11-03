@@ -8,5 +8,5 @@ public enum HttpRequestStage
     RequestHeaders,
     ResponseHeaders,
     ResponseContent,
-    TotalRequest,
+    Request,
 }

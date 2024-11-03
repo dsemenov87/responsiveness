@@ -27,7 +27,7 @@
                       Median = x.Measurements
                           .LastOrDefault()
                           ?.MetricsList
-                          ?.FirstOrDefault(m => m.Stage == HttpRequestStage.TotalRequest)
+                          ?.FirstOrDefault(m => m.Stage == HttpRequestStage.Request)
                           ?.Median 
                                ?? double.PositiveInfinity,
                       x.TotalErrorCount,

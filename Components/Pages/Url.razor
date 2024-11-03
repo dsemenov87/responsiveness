@@ -13,10 +13,10 @@
 <hr/>
 <div class="container">
     <div class="row justify-content-start">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-sm-6">
             <LinePlot Settings="@_responseTimeSettings"></LinePlot>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-sm-6">
             <table class="table">
                 <thead>
                 <tr>
@@ -43,10 +43,9 @@
 
     </div>
 </div>
-<hr/>
 <ul class="list-group">
     <li class="list-group-item">
-        <h4>Total errors: @_process.TotalErrorCount</h4>
+        <h4>Total errors: @(_process?.TotalErrorCount ?? 0)</h4>
     </li>
 </ul>
 
@@ -63,17 +62,13 @@
         ElementId = "responseTime",
         Title = "URL response time",
         Width = 600,
+        Data =
+        {
+            new List<LinePlotData>(),
+            new List<LinePlotData>(),
+            new List<LinePlotData>(),
+        },
         Height = 350,
-        HtmlClass = "chart-left",
-    };
-
-    private readonly LinePlotSettings _errorsSettings = new()
-    {
-        ElementId = "errors",
-        Title = "URL errors total count",
-        Width = 600,
-        Height = 350,
-        HtmlClass = "chart-left",
     };
 
     private readonly Dictionary<HttpRequestStage, (double mean, double med)> _networkData = new();
@@ -82,35 +77,28 @@
     {
         var uri = DecodeUri(EncodedUri!);
         _process = Model[uri];
-        _responseTimeSettings.Data.AddRange(GetResponseTimePlotData(_process));
-        _errorsSettings.Data.AddRange(GetErrorsPlotData(_process));
+        UpdateResponseTime(_process);
         UpdateNetworkData(_process);
     }
 
-    private IEnumerable<LinePlotData> GetResponseTimePlotData(UriMonitoringProcess process)
+    private void UpdateResponseTime(UriMonitoringProcess process)
     {
+        var data = _responseTimeSettings.Data;
+        data[0].Clear();
+        data[1].Clear();
+        data[2].Clear();
         foreach (var measurement in process.Measurements)
         {
             var time = (measurement.Timestamp - Model.StartTime).TotalMilliseconds / 1_000;
-            var metrics = measurement.MetricsList.FirstOrDefault(m => m.Stage == HttpRequestStage.TotalRequest);
+            var metrics = measurement.MetricsList.FirstOrDefault(m => m.Stage == HttpRequestStage.Request);
             if (metrics is null) continue;
             
-            yield return new LinePlotData { MetricName = "Mean", N = metrics.Mean, Timestamp = time };
-            yield return new LinePlotData { MetricName = "StdDev", N = metrics.StdDev, Timestamp = time };
-            yield return new LinePlotData { MetricName = "Median", N = metrics.Median, Timestamp = time };
+            data[0].Add(new LinePlotData { Name = "Mean", Y = metrics.Mean, X = time });
+            data[1].Add(new LinePlotData { Name = "StdDev", Y = metrics.StdDev, X = time });
+            data[2].Add(new LinePlotData { Name = "Median", Y = metrics.Median, X = time });
         }
     }
 
-    private IEnumerable<LinePlotData> GetErrorsPlotData(UriMonitoringProcess process)
-    {
-        var counter = 0;
-        foreach (var errorTime in process.Errors)
-        {
-            var time = (errorTime - Model.StartTime).TotalMilliseconds / 1_000;
-            yield return new LinePlotData { MetricName = "Error", N = ++counter, Timestamp = time };
-        }
-    }
-    
     private void UpdateNetworkData(UriMonitoringProcess process)
     {
         var data = new Dictionary<HttpRequestStage, List<double>>();

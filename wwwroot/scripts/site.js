@@ -1,55 +1,111 @@
 SiteFunctions = {
     GenerateLinePlot: function (settings) {
         // set the dimensions and margins of the graph
-        const margin = {top: 10, right: 30, bottom: 30, left: 60},
+        const margin = {top: 20, right: 20, bottom: 30, left: 40},
             width = settings.width - margin.left - margin.right,
             height = settings.height - margin.top - margin.bottom;
 
-        // append the svg object to the body of the page
-        const svg = d3.select("#" + settings.elementId)
-            .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
-
         const data = settings.data;
-        
-        // group the data: I want to draw one line per group
-        const sumstat = d3.group(data, d => d.metricName); // nest function allows to
 
-        // Add X axis --> it is a date format
-        const x = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return d.timestamp; }))
-            .range([ 0, width ]);
-        svg.append("g")
-            .attr("transform", `translate(0, ${height})`)
-            .call(d3.axisBottom(x).ticks(5));
+        // append the svg object to the body of the page
+        const svg = d3.select("#" + settings.elementId).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewBox", [0, 0, width + 50, height])
+            // .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+        const yTitle = g =>
+            g.append("text")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 10)
+                .attr("y", 10)
+                .html(settings.title);
 
-        // Add Y axis
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return +d.n; })])
-            .range([ height, 0 ]);
-        svg.append("g")
-            .call(d3.axisLeft(y));
+        const yLabel = svg.append("g").call(yTitle);
+        const xScale = d3.scaleTime(
+            // domain
+            [data[0][0].x, data[0][data[0].length - 1].x],
+            // range
+            [margin.left, width - margin.right]
+        );
+        // flatten the data into a single array
+        const yScalePrices = data.flat().map(d => d.y);
+        // and find the max value from that array
+        const yMax = d3.max([...yScalePrices, 8]);
+        const yScale = d3.scaleLinear([1, yMax], [height - margin.bottom, margin.top]);
+        const colors = d3.scaleOrdinal(d3.schemeCategory10);
+        const xAxis = d3.axisBottom(xScale);
+        const yAxis = d3.axisLeft(yScale);
+        const line = d3
+            .line()
+            .x(d => xScale(d.x))
+            .y(d => yScale(d.y))
+            .curve(d3.curveNatural);
+        const xGrid = g =>
+            g.selectAll('line')
+                .data(xScale.ticks())
+                .join('line')
+                .attr('x1', d => xScale(d))
+                .attr('x2', d => xScale(d))
+                .attr('y1', margin.top)
+                .attr('y2', height - margin.bottom)
+                .style("stroke-width", 0.2)
+                .style("stroke", "black");
 
-        // color palette
-        const color = d3.scaleOrdinal()
-            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        const yGrid = g =>
+            g.attr('class', 'grid-lines')
+                .selectAll('line')
+                .data(yScale.ticks())
+                .join('line')
+                .attr('x1', margin.left)
+                .attr('x2', width - margin.right)
+                .attr('y1', d => yScale(d))
+                .attr('y2', d => yScale(d))
+                .style("stroke-width", 0.2)
+                .style("stroke", "black");
 
-        // Draw the line
-        svg.selectAll(".line")
-            .data(sumstat)
-            .join("path")
-            .attr("fill", "none")
-            .attr("stroke", function(d){ return color(d[0]) })
-            .attr("stroke-width", 1.5)
-            .attr("d", function(d){
-                return d3.line()
-                    .x(function(d) { return x(d.timestamp); })
-                    .y(function(d) { return y(+d.n); })
-                    (d[1])
-            })
+        const xgridlines = svg.append("g").call(xGrid);
+        const ygridlines = svg.append("g").call(yGrid);
+
+        svg
+            .selectAll('path')
+            .data(data)
+            .join('path')
+            .attr('class', 'stock-lines')
+            .attr('d', line)
+            .style('stroke', (d, i) => colors(d[i].name))
+            .style('stroke-width', 2)
+            .style('fill', 'transparent');
+
+        svg
+            .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0,${height - margin.bottom})`)
+            .call(xAxis);
+
+        svg
+            .append('g')
+            .attr('class', 'y-axis')
+            .attr('transform', `translate(${margin.left},0)`)
+            .call(yAxis)
+            .selectAll('.domain')
+            .remove();
+
+        svg
+            .selectAll('text.label')
+            .data(data)
+            .join('text')
+            .attr('class', 'label')
+            .attr('x', width - margin.right + 5)
+            // The BABA stock name sits right on top of another; let's move it up 12 pixels.
+            .attr(
+                'y',
+                d => yScale(d[d.length - 1].value) + (d[0].name === 'Mean' ? 12 : 0)
+            )
+            .attr('dy', '0.35em')
+            .style('fill', d => colors(d[0].name))
+            .style('font-family', 'sans-serif')
+            .style('font-size', 12)
+            .text(d => d[0].name); 
     },
 
     GeneratePie: function (settings) {

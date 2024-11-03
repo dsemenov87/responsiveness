@@ -1,10 +1,9 @@
 @using responsiveness.Components.Models
 @rendermode InteractiveServer
 
-<div class="@(Settings?.HtmlClass ?? "")">
-    <h4>@(Settings?.Title ?? "")</h4>
+<section class="chart-left">
     <div id="@(Settings?.ElementId ?? "")"></div>
-</div>
+</section>
 
 @inject IJSRuntime JsRuntime
 
@@ -14,7 +13,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Settings is not null)
+        if (firstRender && Settings is not null && Settings.Data.Any() && Settings.Data[0].Any())
         {
             await JsRuntime.InvokeVoidAsync("SiteFunctions.GenerateLinePlot", Settings);
         }

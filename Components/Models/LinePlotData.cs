@@ -2,7 +2,7 @@ namespace responsiveness.Components.Models;
 
 public class LinePlotData
 {
-    public required string MetricName { get; init; }
-    public required double Timestamp { get; init; }
-    public required double N { get; init; }
+    public required string Name { get; init; }
+    public required double X { get; init; }
+    public required double Y { get; init; }
 }

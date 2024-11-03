@@ -103,7 +103,7 @@ internal sealed class BenchmarkHttpEventListener : EventListener
         var raw = _timings.Value!;
         var timings = new HttpRequestTimings();
         
-        timings.Put(HttpRequestStage.TotalRequest, raw.RequestStop - raw.RequestStart);
+        timings.Put(HttpRequestStage.Request, raw.RequestStop - raw.RequestStart);
         timings.Put(HttpRequestStage.Dns, raw.DnsStop - raw.DnsStart);
         timings.Put(HttpRequestStage.SslHandshake, raw.SslHandshakeStop - raw.SslHandshakeStart);
         timings.Put(HttpRequestStage.SocketConnect, raw.SocketConnectStop - raw.SocketConnectStart);

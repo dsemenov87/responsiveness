@@ -35,9 +35,9 @@ public sealed class UriBenchmarkService(
 
         var metrics = data.Select(kv => 
         {
-            var mean = statsCalculator.Mean(kv.Value.ToArray());
-            var stdDev = statsCalculator.StdDev(kv.Value.ToArray(), mean);
-            var median = statsCalculator.Median(kv.Value.ToArray());
+            var mean = statsCalculator.Mean(kv.Value);
+            var stdDev = statsCalculator.StdDev(kv.Value, mean);
+            var median = statsCalculator.Median(kv.Value);
             return new UriMetrics(kv.Key, mean, stdDev, median);
         })
         .ToArray();
