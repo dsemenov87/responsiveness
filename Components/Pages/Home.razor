@@ -22,28 +22,45 @@
         <th>Total errors</th>
         <th></th>
         <th></th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var process in Model.GetProcesses())
     {
-        <tr>
-            <td>
-                <a href="" @onclick="() => NavigateToStatistics(process.Uri)" @onclick:preventDefault>
-                    @process.Uri.ToString()    
-                </a>
+        <tr class="@(EnsureStatus(process) switch {
+                UriMonitoringStatus.Alive => "table-success",
+                UriMonitoringStatus.DoesntResponse => "table-danger", 
+                UriMonitoringStatus.Stopped => "table-warning",
+                _ => "table-light"
+            })">
+            <td>@if (process.Status != UriMonitoringStatus.Stopped)
+                {
+                    <a href="" @onclick="() => NavigateToStatistics(process.Uri)" @onclick:preventDefault>
+                        @process.Uri.ToString()
+                    </a>
+                }
+                else
+                {
+                    <span>@process.Uri.ToString()</span>
+                }
             </td>
             <td>TO DO: Progress bar</td>
             <td>@process.Status</td>
             <td>@process.TotalErrorCount</td>
             <td>
-                <button class="btn btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Resume">
-                    <i class="fa fa-reset"></i> Resume
+                <button @onclick="() => process.Pause()" class="btn btn-sm btn-secondary" type="button" data-toggle="tooltip" data-placement="top" title="Pause">
+                    <i class="fa fa-pause"></i> Pause
                 </button>
             </td>
             <td>
-                <button @onclick="() => RemoveUrl(process.Uri)" class="btn btn-sm btn-danger rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
-                    <i class="fa fa-trash"></i> Delete
+                <button @onclick="() => process.Resume()" class="btn btn-sm btn-primary" type="button" data-toggle="tooltip" data-placement="top" title="Resume">
+                    Resume
+                </button>
+            </td>
+            <td>
+                <button @onclick="() => RemoveUrl(process.Uri)" class="btn btn-sm btn-danger" type="button" data-toggle="tooltip" data-placement="top" title="Delete">
+                    Delete
                 </button>
             </td>
         </tr>
@@ -68,6 +85,12 @@
         }
     }
 
+    private static UriMonitoringStatus EnsureStatus(UriMonitoringProcess process)
+    {
+        process.EnsureHealthy();
+        return process.Status;
+    }
+    
     private void RemoveUrl(Uri uri) => Model.StopUriMonitoring(uri);
 
     private void NavigateToStatistics(Uri uri)

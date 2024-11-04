@@ -76,15 +76,15 @@
         try
         {
             await base.OnAfterRenderAsync(firstRender);
+
+            await Task.Delay(30_000);
+            await JsRuntime.InvokeVoidAsync("window.location.reload");
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
-    
-        await Task.Delay(10_000);
-        await JsRuntime.InvokeVoidAsync("window.location.reload");
     }
 
     protected override void OnInitialized()

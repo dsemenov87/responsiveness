@@ -3,7 +3,6 @@
 @using responsiveness.Models
 @rendermode InteractiveServer
 @inject UriMonitoringModel Model
-@inject IJSRuntime JsRuntime
 
 <PageTitle>Top</PageTitle>
 
@@ -48,10 +47,4 @@
 </div>
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-        await Task.Delay(10_000);
-        await JsRuntime.InvokeVoidAsync("window.location.reload");
-    }
 }

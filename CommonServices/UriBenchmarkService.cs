@@ -64,8 +64,10 @@ public sealed class UriBenchmarkService(
             logger.LogWarning("Error while sending request to url {Uri}: {StatusCode}", uri, response.StatusCode);
             return null;
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
+            if (ex is not HttpRequestException and not TimeoutException)
+                throw;
             logger.LogWarning("Error while sending request to url {Uri}: {ErrorMessage}", uri, ex.Message);
             return null;
         }
