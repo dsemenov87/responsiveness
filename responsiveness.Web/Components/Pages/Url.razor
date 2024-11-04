@@ -1,8 +1,9 @@
 ﻿@page "/uri/{uri}"
 @rendermode InteractiveServer
-@using responsiveness.CommonServices
+@using responsiveness.Abstractions
 @using responsiveness.Components.Models
 @using responsiveness.Models
+@using responsiveness.Web.Models
 @inject UriMonitoringModel Model
 @inject IStatsCalculator StatsCalculator
 @inject IJSRuntime JsRuntime

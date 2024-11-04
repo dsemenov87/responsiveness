@@ -1,6 +1,4 @@
-using responsiveness.CommonServices;
-
-namespace responsiveness.Models;
+namespace responsiveness.Abstractions;
 
 /// <summary>
 /// URI measurement result

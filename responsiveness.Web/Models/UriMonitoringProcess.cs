@@ -1,4 +1,6 @@
-namespace responsiveness.Models;
+using responsiveness.Abstractions;
+
+namespace responsiveness.Web.Models;
 
 public sealed class UriMonitoringProcess: IDisposable
 {

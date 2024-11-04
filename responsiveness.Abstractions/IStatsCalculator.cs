@@ -1,4 +1,4 @@
-namespace responsiveness.CommonServices;
+namespace responsiveness.Abstractions;
 
 public interface IStatsCalculator
 {

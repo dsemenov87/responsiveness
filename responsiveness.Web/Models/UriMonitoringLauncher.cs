@@ -1,13 +1,15 @@
 using Microsoft.Extensions.Options;
-using responsiveness.CommonServices;
+using responsiveness.Abstractions;
+using responsiveness.Benchmark;
+using responsiveness.Models;
 
-namespace responsiveness.Models;
+namespace responsiveness.Web.Models;
 
 public sealed class UriMonitoringLauncher(
-    IOptions<UriMonitoringOptions> options,
+    IOptions<UriBenchmarkOptions> options,
     IUriBenchmarkService uriBenchmarkService,
     ILogger<UriMonitoringLauncher> logger
-) : IUriMonitoringLauncher
+) : IUriMonitoringLauncher<UriMonitoringProcess>
 {
     public UriMonitoringProcess LaunchProcess(Uri uri) =>
         new(uri, (os, oe, ct) => LoopAsync(uri, os, oe, ct));

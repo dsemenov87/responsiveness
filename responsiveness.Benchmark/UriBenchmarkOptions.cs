@@ -1,11 +1,8 @@
-using System.Collections;
-using Microsoft.Extensions.Http.Resilience;
+namespace responsiveness.Benchmark;
 
-namespace responsiveness.Models;
-
-public class UriMonitoringOptions
+public class UriBenchmarkOptions
 {
-    public const string SectionName = "UriMonitoring";
+    public const string SectionName = "UriBenchmark";
     
     /// <summary>
     /// delay time, seconds

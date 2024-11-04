@@ -1,4 +1,4 @@
-namespace responsiveness.Models;
+namespace responsiveness.Web.Models;
 
 public enum UriMonitoringStatus
 {

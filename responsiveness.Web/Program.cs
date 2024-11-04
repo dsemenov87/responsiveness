@@ -1,7 +1,10 @@
-using responsiveness.CommonServices;
-using responsiveness.Components;
 using responsiveness.Models;
 using Microsoft.Extensions.Options;
+using responsiveness.Abstractions;
+using responsiveness.Benchmark;
+using responsiveness.Web.CommonServices;
+using responsiveness.Web.Components;
+using responsiveness.Web.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,18 +34,18 @@ return;
 
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
-    services.Configure<UriMonitoringOptions>(configuration.GetSection(UriMonitoringOptions.SectionName));
+    services.Configure<UriBenchmarkOptions>(configuration.GetSection(UriBenchmarkOptions.SectionName));
     services.AddHttpClient(nameof(UriBenchmarkService))
         .ConfigureHttpClient((sp, c) =>
         {
-            var config = sp.GetRequiredService<IOptions<UriMonitoringOptions>>().Value;
+            var config = sp.GetRequiredService<IOptions<UriBenchmarkOptions>>().Value;
             c.Timeout = TimeSpan.FromSeconds(config.HttpClientTimeoutSec);
         })
         .AddStandardResilienceHandler();
     services.AddSingleton<IStatsCalculator, StatsCalculator>();
     services.AddSingleton<IUriBenchmarkService, UriBenchmarkService>();
     services.AddSingleton<UriMonitoringModel>();
-    services.AddSingleton<IUriMonitoringLauncher, UriMonitoringLauncher>();
+    services.AddSingleton<IUriMonitoringLauncher<UriMonitoringProcess>, UriMonitoringLauncher>();
     services.AddRazorComponents().AddInteractiveServerComponents();
 }
 

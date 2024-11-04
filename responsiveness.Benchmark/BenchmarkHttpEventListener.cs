@@ -1,6 +1,7 @@
 using System.Diagnostics.Tracing;
+using responsiveness.Abstractions;
 
-namespace responsiveness.CommonServices;
+namespace responsiveness.Benchmark;
 
 /// <summary>
 /// https://stackoverflow.com/questions/74884835/c-sharp-httpclient-response-time-break-down

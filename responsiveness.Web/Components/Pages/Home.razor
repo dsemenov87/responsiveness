@@ -1,9 +1,11 @@
 ﻿@page "/"
 @using System.Net
+@using responsiveness.Abstractions
 @using responsiveness.Models
+@using responsiveness.Web.Models
 @rendermode InteractiveServer
 @inject UriMonitoringModel Model
-@inject IUriMonitoringLauncher MonitoringLauncher
+@inject IUriMonitoringLauncher<UriMonitoringProcess> MonitoringLauncher
 @inject NavigationManager Navigation
 
 <PageTitle>Urls (@Model.GetProcesses().Count)</PageTitle>

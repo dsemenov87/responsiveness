@@ -1,13 +1,13 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using responsiveness.Models;
+using responsiveness.Abstractions;
 
-namespace responsiveness.CommonServices;
+namespace responsiveness.Benchmark;
 
 public sealed class UriBenchmarkService(
     IHttpClientFactory httpClientFactory,
-    
     IStatsCalculator statsCalculator,
-    IOptions<UriMonitoringOptions> options,
+    IOptions<UriBenchmarkOptions> options,
     ILogger<UriBenchmarkService> logger
     ): IUriBenchmarkService
 {

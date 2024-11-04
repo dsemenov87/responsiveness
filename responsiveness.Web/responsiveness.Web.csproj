@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>responsiveness.Web</AssemblyName>
+    <RootNamespace>responsiveness.Web</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -19,22 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\UrlResponse.cs" />
-    <Compile Remove="Models\UrlInfo.cs" />
-    <Compile Remove="BenchmarkTests.cs" />
-    <Compile Remove="BenchmarkDotNet.Artifacts\**" />
-    <Compile Remove="Components\Pages\Top.cshtml.cs" />
-    <Compile Remove="HostedServices\UriMonitoringHostedService.cs" />
-    <Compile Remove="Components\Pages\Refresh.cshtml.cs" />
-    <Compile Remove="HostedServices\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
-    <EmbeddedResource Remove="HostedServices\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="BenchmarkDotNet.Artifacts\**" />
     <Content Remove="Components\Pages\Top.cshtml" />
     <Content Remove="Components\Pages\Urls.razor" />
@@ -44,9 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="BenchmarkDotNet.Artifacts\**" />
-    <None Remove="Components\Pages\NewFile1.txt" />
-    <None Remove="HostedServices\**" />
+    <ProjectReference Include="..\responsiveness.Abstractions\responsiveness.Abstractions.csproj" />
+    <ProjectReference Include="..\responsiveness.Benchmark\responsiveness.Benchmark.csproj" />
   </ItemGroup>
 
 </Project>

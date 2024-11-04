@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Text;
+using responsiveness.Abstractions;
 
-namespace responsiveness.CommonServices;
+namespace responsiveness.Benchmark;
 
 public sealed class HttpRequestTimings: IEnumerable<(HttpRequestStage, double)>
 {

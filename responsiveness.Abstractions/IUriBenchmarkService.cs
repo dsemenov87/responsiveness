@@ -1,6 +1,4 @@
-using responsiveness.Models;
-
-namespace responsiveness.CommonServices;
+namespace responsiveness.Abstractions;
 
 public interface IUriBenchmarkService
 {
