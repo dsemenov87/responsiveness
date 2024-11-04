@@ -26,10 +26,12 @@
     <Compile Remove="Components\Pages\Top.cshtml.cs" />
     <Compile Remove="HostedServices\UriMonitoringHostedService.cs" />
     <Compile Remove="Components\Pages\Refresh.cshtml.cs" />
+    <Compile Remove="HostedServices\**" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
+    <EmbeddedResource Remove="HostedServices\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,15 +40,13 @@
     <Content Remove="Components\Pages\Urls.razor" />
     <Content Remove="Components\Pages\Refresh.cshtml" />
     <Content Remove="Components\Pages\Refresh.razor" />
+    <Content Remove="HostedServices\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="BenchmarkDotNet.Artifacts\**" />
     <None Remove="Components\Pages\NewFile1.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="HostedServices\" />
+    <None Remove="HostedServices\**" />
   </ItemGroup>
 
 </Project>
